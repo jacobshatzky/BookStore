@@ -175,6 +175,7 @@ public class Main {
 			if(selection.equals("1")) {
 				System.out.println("\n");
 				shoppingCart.add(isbn);
+				System.out.println("Book adding to shopping cart!");
 				viewBook(isbn);
 			}else if(selection.equals("2")) {
 				System.out.println("\n");
@@ -193,11 +194,61 @@ public class Main {
 	}
 	
 	static void search() {
+		System.out.println("How would you like to search for a book?");
+		System.out.println("1. Title");
+		System.out.println("2. Genre");
+		System.out.println("3. Price");
+		System.out.println("4. Author");
+		System.out.println("5. Publisher");
+		
+		Scanner input = new Scanner(System.in);
+		String selection = input.nextLine();
+		
+		if(selection.equals("1")) {
+			System.out.println("\n");
+			System.out.println("Enter the Title of the book you are looking for:");
+			Scanner input1 = new Scanner(System.in);
+			String selection1 = input.nextLine();
+			searchQuery("title", selection1);
+		}else if(selection.equals("2")) {
+			System.out.println("\n");
+			System.out.println("Enter the Genre of the book(s) you are looking for:");
+			Scanner input1 = new Scanner(System.in);
+			String selection1 = input.nextLine();
+			searchQuery("genre", selection1);
+		}else if(selection.equals("3")) {
+			System.out.println("\n");
+			System.out.println("Enter the Price of the book(s) you are looking for:");
+			Scanner input1 = new Scanner(System.in);
+			String selection1 = input.nextLine();
+			searchQuery("price", selection1);
+		}else if(selection.equals("4")) {
+			System.out.println("\n");
+			System.out.println("Enter the Author of the book(s) you are looking for:");
+			Scanner input1 = new Scanner(System.in);
+			String selection1 = input.nextLine();
+			searchQuery("author_name", selection1);
+		}else if(selection.equals("5")) {
+			System.out.println("\n");
+			System.out.println("Enter the Publisher of the book(s) you are looking for:");
+			Scanner input1 = new Scanner(System.in);
+			String selection1 = input.nextLine();
+			searchQuery("publisher_name", selection1);
+		}else {
+			System.out.println("\nError, Please enter either 1,2,3,4,5");
+			search();
+		}
+		
+	}
+	
+	static void searchQuery(String type, String input) {
 		
 	}
 	
 	static void checkout() {
-		
+		System.out.println("Enter your email address");
+		Scanner input = new Scanner(System.in);
+		String selection = input.nextLine();
 	}
 	
 	static void register() {
