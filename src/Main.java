@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-	static ArrayList<String> books = new ArrayList<String>(); 
-	static ArrayList<String> isbns = new ArrayList<String>(); 
-	static ArrayList<String> shoppingCart = new ArrayList<String>(); 
+	static ArrayList<Book> books = new ArrayList<Book>();
+	
 	public static void main(String args[]) throws Exception {
 		System.out.println("Welcome to the COMP3005 interactive BookStore. \n");
 		loadBooks();
 		selectPortal();
-		
 		
 	}
 	
@@ -112,7 +110,7 @@ public class Main {
 	static void browseAll() {
 		System.out.println("\nEnter the book(number) you would like to view: ");
 		for(int i=0; i<books.size(); i++) {
-			System.out.println((i+1) + "." + books.get(i));
+			System.out.println((i+1) + "." + books.get(i).getTitle());
 		}
 		
 		Scanner input = new Scanner(System.in);
@@ -121,7 +119,7 @@ public class Main {
 			int number = Integer.parseInt(selection);
 			if(number >=1 && number<=books.size()) {
 				//select is valid so now show that single book
-				viewBook(isbns.get(number-1));
+				viewBook(books.get(number-1).getISBN());
 			}else {
 				System.out.println("\nError, Please enter a valid book number");
 				browseAll();
@@ -136,7 +134,7 @@ public class Main {
 	static void viewBook(String isbn) {
 		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 		String username = "postgres";
-		String psswd = "M1ckey45";
+		String psswd = "1234";
 		try {
 			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
 						
@@ -160,6 +158,7 @@ public class Main {
 			
 			conn.close();
 			
+			System.out.println("\n");
 			for(int i=0; i<viewBook.size(); i++) {
 				System.out.println(viewBook.get(i));
 			}
@@ -174,7 +173,7 @@ public class Main {
 			
 			if(selection.equals("1")) {
 				System.out.println("\n");
-				shoppingCart.add(isbn);
+				//shoppingCart.add(isbn);
 				System.out.println("Book adding to shopping cart!");
 				viewBook(isbn);
 			}else if(selection.equals("2")) {
@@ -259,7 +258,7 @@ public class Main {
 	static void loadBooks() {
 		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 		String username = "postgres";
-		String psswd = "M1ckey45";
+		String psswd = "1234";
 		try {
 			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
 						
@@ -269,9 +268,18 @@ public class Main {
 			
 			ResultSet test = statement.executeQuery(query);
 			
+			
 			while(test.next()) {
-				books.add(test.getString("title"));
-				isbns.add(test.getString("ISBN"));
+				Book newBook = new Book();
+				newBook.setTitle(test.getString("title"));
+				newBook.setISBN(test.getString("ISBN"));
+				newBook.setGenre(test.getString("genre"));
+				newBook.setPrice(test.getInt("price"));
+				newBook.setAuthor(test.getString("author_name"));
+				newBook.setPublisher(test.getString("publisher_name"));
+				newBook.setPrice(test.getInt("quantity"));
+				books.add(newBook);
+				
 			}
 			
 			conn.close();
@@ -280,4 +288,5 @@ public class Main {
 			System.out.println(e);
 		}
 	}
+	
 }
