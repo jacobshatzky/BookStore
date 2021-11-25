@@ -119,7 +119,7 @@ public class Main {
 			int number = Integer.parseInt(selection);
 			if(number >=1 && number<=books.size()) {
 				//select is valid so now show that single book
-				viewBook(books.get(number-1).getISBN());
+				searchQuery("ISBN", books.get(number-1).getISBN());
 			}else {
 				System.out.println("\nError, Please enter a valid book number");
 				browseAll();
@@ -129,67 +129,6 @@ public class Main {
 			browseAll();
 		}
 		
-	}
-	
-	static void viewBook(String isbn) {
-		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
-		String username = "postgres";
-		String psswd = "1234";
-		try {
-			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
-						
-			String query = "SELECT * FROM book WHERE ISBN='" + isbn + "'";
-						
-			Statement statement = conn.createStatement();
-			
-			ResultSet test = statement.executeQuery(query);
-			
-			ArrayList<String> viewBook = new ArrayList<String>(); 
-			
-			while(test.next()) {
-				viewBook.add("Title:		" + test.getString("title"));
-				viewBook.add("Genre:		" + test.getString("genre"));
-				viewBook.add("Pages:		" + test.getString("pages"));
-				viewBook.add("Price:          $" + test.getString("price"));
-				viewBook.add("Author:		" + test.getString("author_name"));
-				viewBook.add("Publisher:	" + test.getString("publisher_name"));
-				
-			}
-			
-			conn.close();
-			
-			System.out.println("\n");
-			for(int i=0; i<viewBook.size(); i++) {
-				System.out.println(viewBook.get(i));
-			}
-			
-			System.out.println("\nSelect from the options below:");
-			System.out.println("1. Add to cart");
-			System.out.println("2. Checkout");
-			System.out.println("3. Go back");
-			
-			Scanner input = new Scanner(System.in);
-			String selection = input.nextLine();
-			
-			if(selection.equals("1")) {
-				System.out.println("\n");
-				//shoppingCart.add(isbn);
-				System.out.println("Book adding to shopping cart!");
-				viewBook(isbn);
-			}else if(selection.equals("2")) {
-				System.out.println("\n");
-				checkout();
-			}else if(selection.equals("3")) {
-				System.out.println("\n");
-				browseAll();
-			}else {
-				System.out.println("\nError, Please enter either 1,2,3");
-				viewBook(isbn);
-			}
-			
-		}catch(Exception e) {
-			System.out.println(e);
-		}
 	}
 	
 	static void search() {
@@ -241,7 +180,74 @@ public class Main {
 	}
 	
 	static void searchQuery(String type, String input) {
-		
+		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+		String username = "postgres";
+		String psswd = "1234";
+		try {
+			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+						
+			String query = "SELECT * FROM book WHERE " + type + "='"  + input + "'" ;
+					
+			Statement statement = conn.createStatement();
+			
+			ResultSet test = statement.executeQuery(query);
+			
+			ArrayList<String> viewBook = new ArrayList<String>(); 
+			
+			while(test.next()) {
+				viewBook.add("Title:		" + test.getString("title"));
+				viewBook.add("Genre:		" + test.getString("genre"));
+				viewBook.add("Pages:		" + test.getString("pages"));
+				viewBook.add("Price:          $" + test.getString("price"));
+				viewBook.add("Author:		" + test.getString("author_name"));
+				viewBook.add("Publisher:	" + test.getString("publisher_name"));
+				
+			}
+			
+			conn.close();
+			
+			System.out.println("\n");
+			for(int i=0; i<viewBook.size(); i++) {
+				System.out.println(viewBook.get(i));
+				
+				if(viewBook.get(i).charAt(2) == 'b') {
+					System.out.println("\n");
+				}
+			}
+			
+			System.out.println("\nSelect from the options below:");
+			System.out.println("1. Add to cart");
+			System.out.println("2. Checkout");
+			System.out.println("3. Browse All");
+			System.out.println("4. Search");
+			
+			Scanner input1 = new Scanner(System.in);
+			String selection = input1.nextLine();
+			
+			if(selection.equals("1")) {
+				System.out.println("\n");
+				//shoppingCart.add(isbn);
+				System.out.println("Book adding to shopping cart!");
+				searchQuery(type, input);
+			}else if(selection.equals("2")) {
+				System.out.println("\n");
+				checkout();
+			}else if(selection.equals("3")) {
+				System.out.println("\n");
+				browseAll();
+			}else if(selection.equals("4")) {
+				System.out.println("\n");
+				search();
+			}else {
+				System.out.println("\nError, Please enter either 1,2,3");
+				searchQuery(type, input);
+			}
+			
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+			
+			
 	}
 	
 	static void checkout() {
