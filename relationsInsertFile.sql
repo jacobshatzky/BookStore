@@ -32,3 +32,5 @@ insert into book values ('973-1-60705-015-4', 'It', 'Horror', 135, 15.99, 'Steph
 insert into book values ('973-1-60705-015-4', 'Hunger Games', 'Thriller', 200, 25.99, 'Suzanne Collins', 'Scholastic Press');
 insert into book values ('973-1-60705-015-4', 'Journey to the Center of the Earth', 'Thriller', 212, 9.99, 'Jules Verne', 'Pierre-Jules Hetzel');
 
+insert into customer values ('4823744352', 'Joe Shmo', '123 derry lane', '123-456-789', 'joeshmo@gmail.com');
+insert into customer values ('4823744353', 'Pennywise', '16 clown street', '987-654-321', 'pennywise@gmail.com');
