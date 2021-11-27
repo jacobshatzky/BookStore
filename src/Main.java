@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -44,10 +45,10 @@ public class Main {
 	}
 	
 	static void ownerPortal() {
-		System.out.println("1. Add new books");
-		System.out.println("2. Remove a book");
-		System.out.println("3. View all publishers");
-		System.out.println("4. View sales reports");
+		System.out.println("1. Add new books");			//TODO
+		System.out.println("2. Remove a book");			//TODO
+		System.out.println("3. View sales reports");	//TODO
+		System.out.println("4. Return to portal selection");
 		Scanner input = new Scanner(System.in);
 		String selection = input.nextLine();
 		
@@ -60,8 +61,11 @@ public class Main {
 		}else if(selection.equals("3")) {
 			System.out.println("\n");
 			viewSalesReports();
+		}else if(selection.equals("4")) {
+			System.out.println("\n");
+			selectPortal();
 		}else {
-			System.out.println("\nError, Please enter either 1,2,3");
+			System.out.println("\nError, Please enter either 1,2,3,4");
 			ownerPortal();
 		}
 	}
@@ -69,8 +73,9 @@ public class Main {
 	static void customerPortal() {
 		System.out.println("1. Browse all books");
 		System.out.println("2. Search for a book");
-		System.out.println("3. Checkout");
+		System.out.println("3. Checkout");				//TODO
 		System.out.println("4. Register");
+		System.out.println("5. Return to portal selection");
 		Scanner input = new Scanner(System.in);
 		String selection = input.nextLine();
 		
@@ -86,8 +91,11 @@ public class Main {
 		}else if(selection.equals("4")) {
 			System.out.println("\n");
 			register();
+		}else if(selection.equals("5")) {
+			System.out.println("\n");
+			selectPortal();
 		}else {
-			System.out.println("\nError, Please enter either 1,2,3,4");
+			System.out.println("\nError, Please enter either 1,2,3,4,5");
 			customerPortal();
 		}
 		
@@ -95,10 +103,119 @@ public class Main {
 	
 	//Owner functions
 	static void addBook() {
+		//generate account number
+		String ISBN = UUID.randomUUID().toString();
 		
+		System.out.println("What is the title of the Book?");
+		Scanner inputTitle = new Scanner(System.in);
+		String title = inputTitle.nextLine();
+		
+		System.out.println("What is the genre of the Book?");
+		Scanner inputGenre = new Scanner(System.in);
+		String genre = inputTitle.nextLine();
+		
+		System.out.println("How many pages is the Book?");
+		Scanner inputPages = new Scanner(System.in);
+		String pagesString = inputPages.nextLine();
+		int pages = Integer.parseInt(pagesString);
+
+		System.out.println("What is the price of the Book?");
+		Scanner inputPrice = new Scanner(System.in);
+		String priceString = inputPrice.nextLine();
+		double price = Double.parseDouble(priceString);
+		
+		System.out.println("Who is the author of the Book?");
+		Scanner inputAuthor = new Scanner(System.in);
+		String author = inputTitle.nextLine();
+		
+		System.out.println("Who is the publisher of the Book?");
+		Scanner inputPublisher = new Scanner(System.in);
+		String publisher = inputTitle.nextLine();		
+		
+		int quantity = 15;
+		
+		//add to db
+		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+		String username = "postgres";
+		String psswd = "1234";
+		try {
+			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+			
+			String query = "INSERT INTO book (isbn, title, genre, pages, price, author_name, publisher_name, quantity)" + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			
+			preparedStmt.setString(1, ISBN);
+			preparedStmt.setString(2, title);
+			preparedStmt.setString(3, genre);
+			preparedStmt.setInt(4, pages);
+			preparedStmt.setDouble(5, price);
+			preparedStmt.setString(6, author);
+			preparedStmt.setString(7, publisher);
+			preparedStmt.setInt(8, quantity);
+			
+			preparedStmt.execute();
+			
+			conn.close();
+			
+			//update books
+			loadBooks();
+			
+			System.out.println("\nThe book has been added to the store!");
+			System.out.println("Returning to owner portal!\n");
+			ownerPortal();
+	
+			
+		}catch(Exception e) {
+			System.out.println(e);
+		}
 	}
 	
 	static void removeBook(){
+		System.out.println("\nEnter the book(number) you would like to remove: ");
+		for(int i=0; i<books.size(); i++) {
+			System.out.println((i+1) + "." + books.get(i).getTitle());
+		}
+		
+		Scanner input = new Scanner(System.in);
+		String selection = input.nextLine();
+		if(selection.chars().allMatch(Character::isDigit)) {
+			int number = Integer.parseInt(selection);
+			if(number >=1 && number<=books.size()) {
+				//select is valid so now delete that book
+				String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+				String username = "postgres";
+				String psswd = "1234";
+				try {
+					Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+								
+					String query = "DELETE FROM book WHERE isbn='" + books.get(number-1).getISBN() + "'";
+								
+					Statement statement = conn.createStatement();
+					
+					statement.executeUpdate(query);
+					
+					conn.close();
+					
+					System.out.println("Book deleted successfully");
+					//update the books array 
+					loadBooks();
+					
+				}catch(Exception e) {
+					System.out.println(e);
+				}
+				
+			}else {
+				System.out.println("\nError, Please enter a valid book number");
+				removeBook();
+			}
+		}else {
+			System.out.println("\nError, Please enter a valid book number");
+			removeBook();
+		}
+		
+		System.out.println("Returning to owner portal");
+		ownerPortal();
 		
 	}
 	
@@ -310,17 +427,24 @@ public class Main {
 			String psswd = "1234";
 			try {
 				Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
-							
-				String query = "INSERT INTO customer VALUES ('" + accountNum + "','" + name + "','" + address + "','" + phone + "','" + email + "')";
-				Statement statement = conn.createStatement();
 				
-				statement.executeQuery(query);
+				String query = "INSERT INTO customer (account_number, name, address, phone, email)" + " VALUES (?, ?, ?, ?, ?)";
+				
+				PreparedStatement preparedStmt = conn.prepareStatement(query);
+				
+				preparedStmt.setString(1, accountNum);
+				preparedStmt.setString(2, name);
+				preparedStmt.setString(3, address);
+				preparedStmt.setString(4, phone);
+				preparedStmt.setString(5, email);
+				
+				preparedStmt.execute();
 				
 				conn.close();
 				
 				System.out.println("\nYou have been registered in the store!");
-				System.out.println("Lets go back to checkout!\n");
-				checkout();
+				System.out.println("Returning to customer portal!\n");
+				customerPortal();
 				
 				
 			}catch(Exception e) {
