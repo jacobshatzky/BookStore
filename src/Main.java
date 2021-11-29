@@ -45,8 +45,8 @@ public class Main {
 	}
 	
 	static void ownerPortal() {
-		System.out.println("1. Add new books");			//TODO
-		System.out.println("2. Remove a book");			//TODO
+		System.out.println("1. Add new books");			
+		System.out.println("2. Remove a book");			
 		System.out.println("3. View sales reports");	//TODO
 		System.out.println("4. Return to portal selection");
 		Scanner input = new Scanner(System.in);
