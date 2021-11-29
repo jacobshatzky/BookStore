@@ -14,6 +14,8 @@ public class Main {
 	
 	static ArrayList<Publisher> publishers = new ArrayList<Publisher>();
 	
+	ShoppingCart cart = new ShoppingCart();
+	
 	public static void main(String args[]) throws Exception {
 		System.out.println("Welcome to the COMP3005 interactive BookStore. \n");
 		loadBooks();
@@ -323,9 +325,13 @@ public class Main {
 			}
 			
 			conn.close();
-			
+			int count = 1;
 			System.out.println("\n");
 			for(int i=0; i<viewBook.size(); i++) {
+				if(viewBook.get(i).charAt(0) == 'T' && viewBook.size() > 6) {
+					System.out.println(count + ".");
+					count++;
+				}
 				System.out.println(viewBook.get(i));
 				
 				if(viewBook.get(i).charAt(2) == 'b') {
@@ -344,14 +350,17 @@ public class Main {
 			
 			if(selection.equals("1")) {
 				System.out.println("\n");
-				//shoppingCart.add(isbn);
-				//System.out.println("Book added to shopping cart!");
-				//searchQuery(type, input);
+				//need to check how many books are being shown, if more than 1, ask user to specify which
+				if(count == 1) {
+					//add the single book to cart
+				}else if(count > 1) {
+					//ask the user which book out of the list they want to add to cart
+					
+				}
 			}else if(selection.equals("2")) {
 				System.out.println("\n");
 				checkout();
 			}else if(selection.equals("3")) {
-				System.out.println("\n");
 				browseAll();
 			}else if(selection.equals("4")) {
 				System.out.println("\n");
@@ -366,6 +375,10 @@ public class Main {
 		}
 			
 			
+	}
+	
+	static void addToCart() {
+		
 	}
 	
 	static void checkout() {
