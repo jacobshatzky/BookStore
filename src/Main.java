@@ -14,7 +14,7 @@ public class Main {
 	
 	static ArrayList<Publisher> publishers = new ArrayList<Publisher>();
 	
-	ShoppingCart cart = new ShoppingCart();
+	static ShoppingCart cart = new ShoppingCart();
 	
 	public static void main(String args[]) throws Exception {
 		System.out.println("Welcome to the COMP3005 interactive BookStore. \n");
@@ -312,31 +312,39 @@ public class Main {
 			
 			ResultSet test = statement.executeQuery(query);
 			
-			ArrayList<String> viewBook = new ArrayList<String>(); 
+			ArrayList<Book> searchResults = new ArrayList<Book>(); 
 			
 			while(test.next()) {
-				viewBook.add("Title:		" + test.getString("title"));
-				viewBook.add("Genre:		" + test.getString("genre"));
-				viewBook.add("Pages:		" + test.getString("pages"));
-				viewBook.add("Price:          $" + test.getString("price"));
-				viewBook.add("Author:		" + test.getString("author_name"));
-				viewBook.add("Publisher:	" + test.getString("publisher_name"));
+				Book newBook = new Book();
+				newBook.setTitle(test.getString("title"));
+				newBook.setISBN(test.getString("ISBN"));
+				newBook.setGenre(test.getString("genre"));
+				newBook.setPages(test.getInt("pages"));
+				newBook.setPrice(test.getDouble("price"));
+				newBook.setAuthor(test.getString("author_name"));
+				newBook.setPublisher(test.getString("publisher_name"));
+				newBook.setQuantity(test.getInt("quantity"));
+				searchResults.add(newBook);
 				
 			}
-			
+					
 			conn.close();
+
 			int count = 1;
 			System.out.println("\n");
-			for(int i=0; i<viewBook.size(); i++) {
-				if(viewBook.get(i).charAt(0) == 'T' && viewBook.size() > 6) {
+			for(int i=0; i<searchResults.size(); i++) {
+				if(searchResults.size() > 1) { 
 					System.out.println(count + ".");
 					count++;
 				}
-				System.out.println(viewBook.get(i));
 				
-				if(viewBook.get(i).charAt(2) == 'b') {
-					System.out.println("\n");
-				}
+				System.out.println("Title:		" + searchResults.get(i).getTitle());
+				System.out.println("Genre:		" + searchResults.get(i).getGenre());
+				System.out.println("Pages:		" + searchResults.get(i).getPages());
+				System.out.println("Price:          $" + searchResults.get(i).getPrice());
+				System.out.println("Author:		" + searchResults.get(i).getAuthor());
+				System.out.println("Publisher:	" + searchResults.get(i).getPublisher());
+				System.out.println("\n");
 			}
 			
 			System.out.println("\nSelect from the options below:");
@@ -350,13 +358,9 @@ public class Main {
 			
 			if(selection.equals("1")) {
 				System.out.println("\n");
+				addToCart(count, searchResults);
 				//need to check how many books are being shown, if more than 1, ask user to specify which
-				if(count == 1) {
-					//add the single book to cart
-				}else if(count > 1) {
-					//ask the user which book out of the list they want to add to cart
-					
-				}
+				
 			}else if(selection.equals("2")) {
 				System.out.println("\n");
 				checkout();
@@ -377,8 +381,30 @@ public class Main {
 			
 	}
 	
-	static void addToCart() {
-		
+	static void addToCart(int count, ArrayList<Book> books) {
+		if(count == 1) {
+			//add the single book to cart
+			cart.getBooks().add(books.get(0));
+			
+		}else if(count > 1) {
+			//ask the user which book out of the list they want to add to cart
+			System.out.println("Which book would you like to add to cart?");
+			Scanner bookInput = new Scanner(System.in);
+			String bookSelection = bookInput.nextLine();
+			if(bookSelection.chars().allMatch(Character::isDigit)) {
+				int number = Integer.parseInt(bookSelection);
+				if(number >=1 && number<=books.size()) {
+					//select is valid so now add that book to cart 
+					cart.getBooks().add(books.get(number-1));
+				}else {
+					System.out.println("\nError, Please enter a valid book number");
+					addToCart(count, books);
+				}
+			}else {
+				System.out.println("\nError, Please enter a valid book number");
+				 addToCart(count, books);
+			}
+		}
 	}
 	
 	static void checkout() {
