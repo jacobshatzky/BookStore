@@ -7,12 +7,35 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
 
+//TODO:
+//checkout(user input - billing and shipping information) + transaction 
+	//when checking out, use customer address as default (billing), 
+	//ask user if shipping address is the same as billing (print it if you want)
+	
+	//transfer a percentage of the sales of books published by these publishers.
+	//order new books if quantity <= 5
+
+	//update reports
+
+//track order 
+
+
+//sales reports 
+//search error handling 
+//add publisher when owner adds book 
+
+
+
 public class Main {
 	static ArrayList<Book> books = new ArrayList<Book>();
 	
 	static ArrayList<Customer> customers = new ArrayList<Customer>();
 	
 	static ArrayList<Publisher> publishers = new ArrayList<Publisher>();
+	
+	static ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+	
+	static Report reports = new Report();
 	
 	static ShoppingCart cart = new ShoppingCart();
 	
@@ -77,7 +100,8 @@ public class Main {
 		System.out.println("2. Search for a book");
 		System.out.println("3. Checkout");				//TODO
 		System.out.println("4. Register");
-		System.out.println("5. Return to portal selection");
+		System.out.println("5. Track Order");
+		System.out.println("6. Return to portal selection");
 		Scanner input = new Scanner(System.in);
 		String selection = input.nextLine();
 		
@@ -223,7 +247,11 @@ public class Main {
 	
 	
 	static void viewSalesReports() {
-		
+		System.out.println("Which report would you like to view?");
+		System.out.println("1. View sales vs. expenditures");
+		System.out.println("2. View sales per genre");
+		System.out.println("3. View sales per author");
+		System.out.println("4. View sales per publisher");
 	}
 	
 	//Customer functions
@@ -391,6 +419,7 @@ public class Main {
 			System.out.println("Which book would you like to add to cart?");
 			Scanner bookInput = new Scanner(System.in);
 			String bookSelection = bookInput.nextLine();
+			
 			if(bookSelection.chars().allMatch(Character::isDigit)) {
 				int number = Integer.parseInt(bookSelection);
 				if(number >=1 && number<=books.size()) {
@@ -424,6 +453,8 @@ public class Main {
 		if(flag == 1) {
 			//process transaction
 			System.out.println("You are registered! Lets checkout!");
+			
+			//transaction 
 		}else {
 			System.out.println("You must be registered in the store to checkout!");
 			register();
@@ -589,7 +620,7 @@ public class Main {
 				newPublisher.setAddress(test.getString("address"));
 				newPublisher.setPhone(test.getString("phone"));
 				newPublisher.setEmail(test.getString("email"));
-				newPublisher.setBankAccount(test.getString("bank_account"));
+				newPublisher.setBankAccount(test.getDouble("bank_account"));
 				publishers.add(newPublisher);	
 			}
 			

@@ -19,7 +19,7 @@ create table publisher
 	 address			varchar(50) not null,
 	 phone				varchar(50) not null, 
 	 email				varchar(50) not null,
-	 bank_account	    varchar(50) not null,		 
+	 bank_account	    decimal(5,2),		 
 	 primary key (ID)	
 	);
 	

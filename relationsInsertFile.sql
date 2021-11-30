@@ -19,11 +19,11 @@ insert into author values ('1004', 'Stephen King', '3 third street');
 insert into author values ('1005', 'Suzanne Collins', '18 scallop street');
 insert into author values ('1006', 'Jules Verne', '22 scranton ave');
 
-insert into publisher values ('1007', 'Bloomsbury Publishing', 'New York', '123-456-789', 'bloomsburypublishing@gmail.com', '539284638');
-insert into publisher values ('1008', 'David Mckay Publications', 'New York', '123-456-789', 'davidmckaypublications@gmail.com', '533284638');
-insert into publisher values ('1009', 'Viking', 'London', '123-456-789', 'viking@gmail.com', '115285631');
-insert into publisher values ('1010', 'Scholastic Press', 'Toronto', '123-456-789', 'scholasticpress@gmail.com', '229284639');
-insert into publisher values ('1011', 'Pierre-Jules Hetzel', 'LA', '123-456-789', 'pierrehetzel@gmail.com', '579277637');
+insert into publisher values ('1007', 'Bloomsbury Publishing', 'New York', '123-456-789', 'bloomsburypublishing@gmail.com', 0);
+insert into publisher values ('1008', 'David Mckay Publications', 'New York', '123-456-789', 'davidmckaypublications@gmail.com', 0);
+insert into publisher values ('1009', 'Viking', 'London', '123-456-789', 'viking@gmail.com', 0);
+insert into publisher values ('1010', 'Scholastic Press', 'Toronto', '123-456-789', 'scholasticpress@gmail.com', 0);
+insert into publisher values ('1011', 'Pierre-Jules Hetzel', 'LA', '123-456-789', 'pierrehetzel@gmail.com', 0);
 
 
 insert into book values ('973-1-60705-015-4', 'Harry Potter and the Philosophers Stone', 'Fantasy Fiction', 223, 19.99, 'J.K. Rowling', 'Bloomsbury Publishing');

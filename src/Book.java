@@ -20,8 +20,11 @@ public class Book {
 	
 	private int quantity; 
 	
+	private int commission;
+	
 	public Book() {
 		quantity = 15;
+		commission = (int)Math.floor(Math.random()*(11)+5);
 	}
 	
 	public String getISBN() {
@@ -87,8 +90,18 @@ public class Book {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	
-	
 
+	public int getCommission() {
+		return commission;
+	}
+
+	public void setCommission(int commission) {
+		this.commission = commission;
+	}
+	
+	public void reStock() {
+		quantity = 15;
+		
+	}
 	
 }

@@ -10,7 +10,7 @@ public class Publisher {
 	
 	private String email;
 	
-	private String bankAccount;
+	private double bankAccount;
 	
 	public Publisher() {
 		
@@ -56,11 +56,11 @@ public class Publisher {
 		this.email = email;
 	}
 
-	public String getBankAccount() {
+	public double getBankAccount() {
 		return bankAccount;
 	}
 
-	public void setBankAccount(String bankAccount) {
+	public void setBankAccount(double bankAccount) {
 		this.bankAccount = bankAccount;
 	}
 	
