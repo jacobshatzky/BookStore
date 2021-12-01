@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.UUID;
 
 //TODO:
+//jean
 //checkout(user input - billing and shipping information) + transaction 
 	//when checking out, use customer address as default (billing), 
 	//ask user if shipping address is the same as billing (print it if you want)
@@ -16,12 +17,10 @@ import java.util.UUID;
 	//order new books if quantity <= 5
 
 	//update reports
-
 //track order 
 
-
+//jacob
 //sales reports 
-//search error handling 
 //add publisher when owner adds book 
 
 
@@ -138,7 +137,7 @@ public class Main {
 		
 		System.out.println("What is the genre of the Book?");
 		Scanner inputGenre = new Scanner(System.in);
-		String genre = inputTitle.nextLine();
+		String genre = inputGenre.nextLine();
 		
 		System.out.println("How many pages is the Book?");
 		Scanner inputPages = new Scanner(System.in);
@@ -152,11 +151,21 @@ public class Main {
 		
 		System.out.println("Who is the author of the Book?");
 		Scanner inputAuthor = new Scanner(System.in);
-		String author = inputTitle.nextLine();
+		String author = inputAuthor.nextLine();
 		
 		System.out.println("Who is the publisher of the Book?");
 		Scanner inputPublisher = new Scanner(System.in);
-		String publisher = inputTitle.nextLine();		
+		String publisher = inputPublisher.nextLine();	
+		int checkPublisher = 0;
+		for(int i=0; i<publishers.size(); i++) {
+			if(publishers.get(i).getName().toLowerCase() == publisher.toLowerCase()) {
+				checkPublisher = 1;
+			}
+		}
+		if(checkPublisher == 0) {
+			//publisher is not current in publishers table so we need to create a publisher 
+			createPublisher(publisher);
+		}
 		
 		int quantity = 15;
 		
@@ -192,6 +201,54 @@ public class Main {
 			ownerPortal();
 	
 			
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+	}
+	
+	static void createPublisher(String publisherName){
+		System.out.println("That publisher is not currently saved, lets create a new publisher");
+		//generate account number
+		String ID = UUID.randomUUID().toString();
+		
+		System.out.println("What is the publishers address?");
+		Scanner inputAddress = new Scanner(System.in);
+		String address = inputAddress.nextLine();
+		
+		System.out.println("What is the publishers email?");
+		Scanner inputEmail = new Scanner(System.in);
+		String email = inputEmail.nextLine();
+		
+		System.out.println("What is the publishers phone number?");
+		Scanner inputPhone = new Scanner(System.in);
+		String phone = inputPhone.nextLine();
+		
+		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+		String username = "postgres";
+		String psswd = "1234";
+		try {
+			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+			
+			String query = "INSERT INTO book (ID, name, address, phone, email, bank_acount)" + " VALUES (?, ?, ?, ?, ?, ?)";
+			
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			
+			preparedStmt.setString(1, ID);
+			preparedStmt.setString(2, publisherName);
+			preparedStmt.setString(3, address);
+			preparedStmt.setString(4, phone);
+			preparedStmt.setString(5, email);
+			preparedStmt.setDouble(5, 0.0);
+			
+			preparedStmt.execute();
+			
+			conn.close();
+			
+			//update books
+			loadPublishers();
+			
+			System.out.println("\nThe publisher has been added to the store!");
+
 		}catch(Exception e) {
 			System.out.println(e);
 		}
@@ -446,7 +503,9 @@ public class Main {
 		for(int i=0; i<customers.size(); i++) {
 			if(customers.get(i).getEmail().equals(selection)) {
 				//user is registered in the store
-				flag = 1;				
+				flag = 1;	
+				
+				
 			}
 		}
 		
