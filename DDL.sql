@@ -4,6 +4,15 @@ create table bookstore
 	 email				varchar(50) not null, 
 	 primary key (ID)
 	);
+
+create table orders(
+	transaction_id		varchar(50) 	not null, 				
+	total_price			decimal(5, 2)	not null,
+	order_status		varchar(50)		default 'on the way',
+	date_order			DATE			default CURRENT_TIMESTAMP, 
+	primary key (transaction_id)
+	
+);
 	
 create table author
 	(
@@ -30,8 +39,9 @@ create table book
 		genre			varchar(50) not null,
 		pages			int NOT NULL,
 		price			decimal(5,2), 
-		author_name 	varchar(50) not null,
-		publisher_name 	varchar(50) not null,
+		author_name 		varchar(50) not null,
+		publisher_name 		varchar(50) not null,
+		quantity		int default 15,
 		primary key (ISBN)
 	);
 	

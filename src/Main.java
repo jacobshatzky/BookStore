@@ -1,8 +1,10 @@
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
@@ -26,9 +28,7 @@ import java.io.*;
 	//update reports
 //track order 
 
-//jacob
-//sales reports 
-//add publisher when owner adds book 
+
 
 public class Main {
 
@@ -38,7 +38,7 @@ public class Main {
 	static ArrayList<Transaction> transactions = 	new ArrayList<Transaction>();
 	static Report reports = 						new Report();
 	static ShoppingCart cart = 						new ShoppingCart();
-	static ArrayList<Book> cartItems = 				new ArrayList<Book>();
+	//static ArrayList<Book> cartItems = 				new ArrayList<Book>();
 	static HashMap<String, String> cartItems = 		new HashMap<String, String>();
 	static HashMap<String, String> searchedQuery = 	new HashMap<String, String>();
 	
@@ -128,7 +128,7 @@ public class Main {
 			register();
 		}else if(selection.equals("5")) {
 			System.out.println("\n");
-			selectPortal();
+			trackOrder();
 		}else if(selection.equals("6")) {
 			System.out.println("\n");
 			selectPortal();
@@ -136,6 +136,73 @@ public class Main {
 			System.out.println("\nError, Please enter either 1,2,3,4,5,6");
 			customerPortal();
 		}
+		
+	}
+	
+	static void trackOrder() {
+		System.out.println("Enter your transaction number:");
+		Scanner input = new Scanner(System.in);
+		String selection = input.nextLine();
+		
+		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+		String username = "postgres";
+		String psswd = "1234";
+		
+		try {
+			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+			//Connection conn = DriverManager.getConnection(jdbcURL);
+						
+			String query = "SELECT * FROM orders where transaction_id='" + selection + "'";
+						
+			Statement statement = conn.createStatement();
+			
+			ResultSet test = statement.executeQuery(query);
+			
+			String status = "";
+			String date = "";
+			while(test.next()) {
+				status = test.getString("order_status");
+				date = test.getString("date_order");
+			}
+			String[] orderDate = date.split("-");
+			String[] currentDate = java.time.LocalDate.now().toString().split("-");
+			
+			int flag = 0;
+			if( (Integer.parseInt(currentDate[0])) > (Integer.parseInt(orderDate[0])) ){
+				//update order to delivered 
+				flag = 1;
+			}else if( (Integer.parseInt(currentDate[1])) > (Integer.parseInt(orderDate[1])) ){
+				//update order to delivered
+				flag = 1;
+			}else if( (Integer.parseInt(currentDate[2])) > (Integer.parseInt(orderDate[2])) ){
+				//update order to be delivered
+				flag = 1;
+			}
+			
+			
+			if(flag == 1) {
+				//update order
+				String query2 = "UPDATE orders SET order_status=? where transaction_id=?";
+				
+				PreparedStatement preparedStmt = conn.prepareStatement(query2);
+				preparedStmt.setString(1, "Delivered");
+				preparedStmt.setString(2, selection);
+		    	
+				preparedStmt.executeUpdate();
+				
+				System.out.println("Order number " + selection + " has been Delivered");
+			}else if(flag == 0) {
+				System.out.println("Order number " + selection + " is on the way!");
+			}
+			
+			conn.close();
+			
+			customerPortal();
+			
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+		
 		
 	}
 	
@@ -313,15 +380,15 @@ public class Main {
 		int quantity = 15;
 		
 		//add to db
-		/*
+		
 		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 		String username = "postgres";
 		String psswd = "1234";
-		*/
+		
 		//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\Desktop\\myDesktop\\bcs\\2021\\f21\\comp3005_dbms\\project\\BookStore_v2\\bkstr.db";
-		String jdbcURL = "jdbc:postgresql://localhost:5432/database"//"jdbc:postgresql://localhost:5432/bookstore"; //"jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
-		String username = "pg";
-		String psswd = "5432";
+//		String jdbcURL = "jdbc:postgresql://localhost:5432/database"//"jdbc:postgresql://localhost:5432/bookstore"; //"jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
+//		String username = "pg";
+//		String psswd = "5432";
 		
 		
 		try {
@@ -478,46 +545,32 @@ public class Main {
 		
 		if(selection.equals("1")) {
 			
-			/*
+			
 			String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 			String username = "postgres";
 			String psswd = "1234";
-			*/
+			
 			//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
-			String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; //
-			String username = "pg";
-			String psswd = "5432";
+//			String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; //
+//			String username = "pg";
+//			String psswd = "5432";
 			
 			try {
-				/*Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);*/
-				Connection conn = DriverManager.getConnection(jdbcURL);
+				Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+				//Connection conn = DriverManager.getConnection(jdbcURL);
 							
-				String query = "SELECT sum(total_price), EXTRACT(MONTH FROM date_order) "
-						+ "FROM orders "
-						+ "GROUP BY EXTRACT(MONTH FROM date_order)";
-				
-				//String query = "select sum(total_price), strftime('%m', date_order) AS month "
-						//+ "from orders "
-						//+ "group by strftime('%m', date_order);";
-				
-				
-				//String query2 = "create view monthlySales as "
-						//+ "select total_price, date_order "
-						//+ "from orders "
-						//+ "where date_order = ;";
+				String query = "SELECT sum(total_price), EXTRACT(MONTH FROM date_order) FROM orders GROUP BY EXTRACT(MONTH FROM date_order)";
 							
 				Statement statement = conn.createStatement();
 				
 				ResultSet test = statement.executeQuery(query);
 				
-				ArrayList<String> orderView = new ArrayList<String>();
-				
+				//[price,month,price,month,price,month]
 				while(test.next()) {
-					orderView.add(test.getString("sum"));
-					orderView.add(test.getString("date_part"));
+					System.out.println("Total sales for the month of " + getMonth(Integer.parseInt(test.getString("date_part"))));
+					System.out.println("$" + test.getString("sum"));
+					System.out.println("\n");
 				}
-				
-				System.out.println(orderView);
 				
 				conn.close();
 				
@@ -527,13 +580,81 @@ public class Main {
 
 			
 		}else if(selection.equals("2")) {
+			String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+			String username = "postgres";
+			String psswd = "1234";
 			
+			try {
+				Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+				//Connection conn = DriverManager.getConnection(jdbcURL);
+							
+				String query = "SELECT sum(total_price) FROM orders";
+							
+				Statement statement = conn.createStatement();
+				
+				ResultSet test = statement.executeQuery(query);
+				
+				while(test.next()) {
+					System.out.println("Total sales for the bookstore:");
+					System.out.println("$" + test.getString("sum"));
+					System.out.println("\n");
+				}
+				
+				conn.close();
+				
+			}catch(Exception e) {
+				System.out.println(e);
+			}
 
 		}else {
 			System.out.println("\nError, Please enter either 1 or 2");
 			viewSalesReports();
 		}
 							
+	}
+	
+	static String getMonth(int num) {
+		String monthName = "";
+		switch (num){
+			case 1:
+				monthName = "Janurary";
+				break;
+			case 2:
+				monthName = "Feburary";
+				break;
+			case 3:
+				monthName = "March";
+				break;
+			case 4:
+				monthName = "April";
+				break;
+			case 5:
+				monthName = "May";
+				break;
+			case 6:
+				monthName = "June";
+				break;
+			case 7:
+				monthName = "July";
+				break;
+			case 8:
+				monthName = "August";
+				break;
+			case 9:
+				monthName = "September";
+				break;
+			case 10:
+				monthName = "October";
+				break;
+			case 11:
+				monthName = "November";
+				break;
+			case 12:
+				monthName = "December";
+				break;
+				
+		}
+		return monthName;
 	}
 	
 	//Customer functions
@@ -550,7 +671,7 @@ public class Main {
 			int number = Integer.parseInt(selection);
 			if(number >= 1 && number <= books.size()) {
 				//select is valid so now show that single book
-				searchQuery("ISBN", books.get(number-1).getISBN());
+				searchQuery2("ISBN", books.get(number-1).getISBN());
 				//searchQuery2("ISBN", books.get(number-1).getISBN());
 			}else {
 				System.out.println("\nError, Please enter a valid book number");
@@ -580,8 +701,8 @@ public class Main {
 			listTitles();
 			Scanner input1 = new Scanner(System.in);
 			String selection1 = input.nextLine();
-			searchQuery("title", selection1);
-			//searchQuery2("title", selection1);
+			//searchQuery("title", selection1);
+			searchQuery2("title", selection1);
 			
 		}else if(selection.equals("2")) {
 			System.out.println("\n");
@@ -589,16 +710,16 @@ public class Main {
 			listGenres();
 			Scanner input1 = new Scanner(System.in);
 			String selection1 = input.nextLine();
-			searchQuery("genre", selection1);
-			//searchQuery2("genre", selection1);
+			//searchQuery("genre", selection1);
+			searchQuery2("genre", selection1);
 			
 		}else if(selection.equals("3")) {
 			System.out.println("\n");
 			System.out.println("Enter the Price of the book(s) you are looking for:");
 			Scanner input1 = new Scanner(System.in);
 			String selection1 = input.nextLine();
-			searchQuery("price", selection1);
-			//searchQuery2("price", selection1);
+			//searchQuery("price", selection1);
+			searchQuery2("price", selection1);
 			
 		}else if(selection.equals("4")) {
 			System.out.println("\n");
@@ -606,8 +727,8 @@ public class Main {
 			listAuthors();
 			Scanner input1 = new Scanner(System.in);
 			String selection1 = input.nextLine();
-			searchQuery("author_name", selection1);
-			//searchQuery2("author_name", selection1);
+			//searchQuery("author_name", selection1);
+			searchQuery2("author_name", selection1);
 			
 		}else if(selection.equals("5")) {
 			System.out.println("\n");
@@ -615,8 +736,8 @@ public class Main {
 			listPublishers();
 			Scanner input1 = new Scanner(System.in);
 			String selection1 = input.nextLine();
-			searchQuery("publisher_name", selection1);
-			//searchQuery2("publisher_name", selection1);
+			//searchQuery("publisher_name", selection1);
+			searchQuery2("publisher_name", selection1);
 			
 		}else {
 			System.out.println("\nError, Please enter either 1,2,3,4,5");
@@ -626,127 +747,43 @@ public class Main {
 		
 	}
 	
-	static void searchQuery(String type, String input) {
-		/*
-		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
-		String username = "postgres";
-		String psswd = "1234";
-		*/
-		//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db"; 
-		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; //
-		String username = "pg";
-		String psswd = "5432";
-		
-		try {
-			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
-			//Connection conn = DriverManager.getConnection(jdbcURL);
-						
-			String query = "SELECT * FROM book WHERE " + type + "='"  + input + "'" ;
-					
-			Statement statement = conn.createStatement();
-			
-			ResultSet test = statement.executeQuery(query);
-			
-			ArrayList<Book> searchResults = new ArrayList<Book>(); 
-			
-			while(test.next()) {
-				Book newBook = new Book();
-				newBook.setTitle(test.getString("title"));
-				newBook.setISBN(test.getString("ISBN"));
-				newBook.setGenre(test.getString("genre"));
-				newBook.setPages(test.getInt("pages"));
-				newBook.setPrice(test.getDouble("price"));
-				newBook.setAuthor(test.getString("author_name"));
-				newBook.setPublisher(test.getString("publisher_name"));
-				newBook.setQuantity(test.getInt("quantity"));
-				searchResults.add(newBook);
-				
-			}
-					
-			conn.close();
+	static void updateQuantity(String isbn){
+		Connection conn = DbConnect.connect(); 
+	    PreparedStatement ps = null; 
+	    ResultSet rs = null; 
+	    
+	    try {
+	    	String bookQuery = "SELECT * FROM book WHERE isbn='"  + isbn + "'";
 
-			int count = 1;
-			System.out.println("\n");
-			for(int i=0; i<searchResults.size(); i++) {
-				if(searchResults.size() > 1) { 
-					System.out.println(count + ".");
-					count++;
-				}
-				
-				System.out.println("Title:		" + searchResults.get(i).getTitle());
-				System.out.println("Genre:		" + searchResults.get(i).getGenre());
-				System.out.println("Pages:		" + searchResults.get(i).getPages());
-				System.out.println("Price:          $" + searchResults.get(i).getPrice());
-				System.out.println("Author:		" + searchResults.get(i).getAuthor());
-				System.out.println("Publisher:	" + searchResults.get(i).getPublisher());
-				System.out.println("\n");
-			}
-			
-			System.out.println("\nSelect from the options below:");
-			System.out.println("1. Add to cart");
-			System.out.println("2. Checkout");
-			System.out.println("3. Browse All");
-			System.out.println("4. Search");
-			
-			Scanner input1 = new Scanner(System.in);
-			String selection = input1.nextLine();
-			
-			if(selection.equals("1")) {
-				System.out.println("\n");
-				addToCart(count, searchResults);
-				
-				//need to check how many books are being shown, if more than 1, ask user to specify which
-				
-			}else if(selection.equals("2")) {
-				System.out.println("\n");
-				checkout();
-			}else if(selection.equals("3")) {
-				browseAll();
-			}else if(selection.equals("4")) {
-				System.out.println("\n");
-				search();
-			}else {
-				System.out.println("\nError, Please enter either 1,2,3");
-				//searchQuery(type, input);
-				searchQuery2(type, input);
-			}
-			
-		}catch(Exception e) {
-			System.out.println(e);
-		}
-			
-			
-	}
+	    	ps = conn.prepareStatement(bookQuery);
 	
-	static void addToCart(int count, ArrayList<Book> books) {
-		if(count == 1) {
-			//add the single book to cart
-			cart.getBooks().add(books.get(0));
+	    	rs = ps.executeQuery();
+	    	
+	    	int quantity = 0;
+	    	while(rs.next()) {    
+	    		quantity = rs.getInt("quantity");
+	    	}
+	    	
+	    	int setQuantity = quantity - 1;
+	    	if((quantity-1) <= 5) {
+	    		setQuantity = 15;
+	    	}
+	    	
+	    	String query = "UPDATE book SET quantity=? where isbn=?";
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
 			
-		}else if(count > 1) {
-			//ask the user which book out of the list they want to add to cart
-			System.out.println("Which book would you like to add to cart?");
-			Scanner bookInput = new Scanner(System.in);
-			String bookSelection = bookInput.nextLine();
-			
-			if(bookSelection.chars().allMatch(Character::isDigit)) {
-				int number = Integer.parseInt(bookSelection);
-				if(number >=1 && number<=books.size()) {
-					//select is valid so now add that book to cart 
-					cart.getBooks().add(books.get(number-1));
-				}else {
-					System.out.println("\nError, Please enter a valid book number");
-					addToCart(count, books);
-				}
-			}else {
-				System.out.println("\nError, Please enter a valid book number");
-				 addToCart(count, books);
-			}
-		}
+			preparedStmt.setDouble(1, setQuantity);
+			preparedStmt.setString(2, isbn);
+	    	
+			preparedStmt.executeUpdate();
+  	
+	    } catch(SQLException e) {
+	    	System.out.println(e.toString());
+	    	
+	    }
 	}
 	
 	static void checkout() {
-		
 		System.out.println("Are you a member? (y/n)"); 
 		Scanner input = new Scanner(System.in);
 		String selection = input.nextLine();
@@ -764,18 +801,23 @@ public class Main {
 			Scanner inputEmail = new Scanner(System.in);
 			String checkEmail = inputEmail.nextLine();
 			
-			authenticateCustomer(checkEmail);
-			
 			int flag = 0;
 		
 			for(int i=0; i<customers.size(); i++) {
 				if(customers.get(i).getEmail().equals(checkEmail)) {//selection)) {
 					//user is registered in the store
 					flag = 1;	
+					
 				}
 			}
 			
+			
 			if(flag == 1) {
+				if(cartItems.size() == 0) {
+					System.out.println("You must have books in your cart to checkout!");
+					customerPortal();
+				}
+				
 				//process transaction
 				System.out.println("\nYou are registered!\nLets checkout!\n");
 								
@@ -783,67 +825,73 @@ public class Main {
 				
 				//transaction
 				double totalPrice = 0;
-				
+				String[] arrstr = {};
 		        for(HashMap.Entry<String, String> entry: cartItems.entrySet()) {
 		            String key = entry.getKey();
 		            String value = entry.getValue();
 		            System.out.println(key + ": " + value);		
 		            
-		            String[] arrstr = value.split("-");
-		            totalPrice += Double.parseDouble(arrstr[6]);
+		            updateQuantity(key);
+		            
+		            arrstr = value.split("-");
+		            totalPrice += Double.parseDouble(arrstr[arrstr.length-1]);
+		            
+		            //give publisher commission for selling book
+		            String publisherName = arrstr[4].trim();
+		            Double publisherCommission = Double.parseDouble(arrstr[arrstr.length-1]) * 0.15;
+		            
+		            
+		            
+		            String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+		    		String username = "postgres";
+		    		String psswd = "1234";
+		    		
+		    		try {
+		    			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+		    		
+			    		String query = "UPDATE publisher SET bank_account=? where publisher_name=?";
+						PreparedStatement preparedStmt = conn.prepareStatement(query);
+						
+						Double currentBalance = 0.0;
+						for(int i=0; i<publishers.size(); i++){
+							if(publishers.get(i).getName().equals(publisherName)) {
+								currentBalance = publishers.get(i).getBankAccount();
+							}
+						}
+						
+						publisherCommission += currentBalance;
+						
+						preparedStmt.setDouble(1, publisherCommission);
+						preparedStmt.setString(2, publisherName);
+				    	
+						preparedStmt.executeUpdate();
+						
+						conn.close();
+						
+						System.out.println("Publisher has been paid");
+						
+						
+		    		}catch(Exception e) {
+		    			System.out.println(e);
+		    		}
 	
 		        }
 		        
+		        loadPublishers();
 		        
 		        double tx = 1.13;
 		        double totalTax = totalPrice * tx;
 		        String bill =String.format("%1.2f",totalTax); 
 		        System.out.println("Total price is $" + bill + ".");
-			
+		        
+		        insertOrder(bill);
+		        
 			}else{
 				System.out.println("You must be registered in the store to checkout!");
 				register();
 			}
 		}		
 	}
-	
-	
-	static void authenticateCustomer(String sel) {
-		
-		// lets read specific row on the database
-	    Connection conn = DbConnect.connect(); 
-	    PreparedStatement ps = null; 
-	    ResultSet rs = null; 
-	    
-	    try {
-	    	String query = "Select email from customer where email = ? "; 
-	    	ps = conn.prepareStatement(query); 
-	    	ps.setString(1, sel);
-	    	rs = ps.executeQuery(); 
-	    	
-	    	// we are reading one row, so no need to loop 
-	    	System.out.println("Checking Customer Database.\n");
-	    	String email = rs.getString(1); 
-	    	System.out.println(email + ", hey we recognize that email!");
-	    	
-	    } catch(SQLException e) {
-	    	System.out.println("You are not in our database.");
-	    	//System.out.println(e.toString());
-	    } finally {
-	    	// close connections
-	    	try{
-	    		rs.close();
-	    		ps.close();
-	    		conn.close(); 
-	    		
-	    	} catch (SQLException e) {
-	    		// TODO: handle exception
-	    		System.out.println(e.toString());
-	    	}	
-	    }    
-	}
-
-	
 	
 	static void register() {
 		
@@ -877,16 +925,16 @@ public class Main {
 			String email = inputEmail.nextLine();
 			
 			//add to db
-			/*
+			
 			String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 			String username = "postgres";
 			String psswd = "1234";
-			*/
+			
 			
 			//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
-			String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore";
-			String username = "pg";
-			String psswd = "5432";
+//			String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore";
+//			String username = "pg";
+//			String psswd = "5432";
 			
 			try {
 				Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
@@ -934,15 +982,15 @@ public class Main {
 	
 	//helper functions
 	static void loadBooks() {
-		/*
+		
 		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 		String username = "postgres";
 		String psswd = "1234";
-		*/
+		
 		//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
-		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; 
-		String username = "pg";
-		String psswd = "5432";
+//		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; 
+//		String username = "pg";
+//		String psswd = "5432";
 		
 		try {
 			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
@@ -976,15 +1024,15 @@ public class Main {
 	}
 	
 	static void loadCustomers() {
-		/*
+		
 		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 		String username = "postgres";
 		String psswd = "1234";
-		*/
+		
 		//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
-		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; 
-		String username = "pg";
-		String psswd = "5432";
+//		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; 
+//		String username = "pg";
+//		String psswd = "5432";
 		
 		try {
 			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
@@ -1015,15 +1063,15 @@ public class Main {
 	}
 	
 	static void loadPublishers() {
-		/*
+		
 		String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
 		String username = "postgres";
 		String psswd = "1234";
-		*/
+		
 		//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
-		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore";
-		String username = "pg";
-		String psswd = "5432";
+//		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore";
+//		String username = "pg";
+//		String psswd = "5432";
 		
 		try {
 			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
@@ -1244,15 +1292,25 @@ public class Main {
 	    	ps = conn.prepareStatement(query);
 	    	rs = ps.executeQuery();
 	    	
-	    	//while(rs.next()) {    
-    		String isbn = 		rs.getString("isbn");
-	        String title = 		rs.getString("title"); 
-	        String genre = 		rs.getString("genre"); 
-	        String pages = 		rs.getString("pages"); 
-	        String price = 		rs.getString("price"); 
-	        String author = 	rs.getString("author_name");
-	        String publisher = 	rs.getString("publisher_name");
-	        int	quantity = 		rs.getInt("quantity");
+	    	String isbn = "";
+	        String title = "";
+	        String genre = "";
+	        String pages = "";
+	        String price = "";
+	        String author = "";
+	        String publisher = "";
+	        int	quantity = 0;
+	    	
+	    	while(rs.next()) {    
+	    		isbn = 		rs.getString("isbn");
+		        title = 		rs.getString("title"); 
+		        genre = 		rs.getString("genre"); 
+		        pages = 		rs.getString("pages"); 
+		        price = 		rs.getString("price"); 
+		        author = 	rs.getString("author_name");
+		        publisher = 	rs.getString("publisher_name");
+		        quantity = 		rs.getInt("quantity");
+	    	}
 	        
 	        System.out.println("\nFollowing item will be added to your shopping cart:\n");
 			System.out.println(isbn + " - "  + title + " - " + author + " - " + genre + " - " + pages + " - " + publisher + " - " + quantity + " - " + price);
@@ -1345,21 +1403,26 @@ public class Main {
 	    }
 	}
 	
-    static void insertOrder(String bookisbn, int q, String price, String customer_id, Connection c){
-
+    static void insertOrder(String price){
+    	String jdbcURL = "jdbc:postgresql://localhost:5432/Bookstore";
+		String username = "postgres";
+		String psswd = "1234";
+		
     	PreparedStatement ps = null; 
     	try {
+    		
+    		Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
+    		
     		String transaction_number = UUID.randomUUID().toString();
 
 	        
-	        String query2 = "insert into orders (transaction_id, account_number, isbn_order, quantity, total_price) values (?, ?, ?, ?, ?);";
-	        ps = c.prepareStatement(query2);
+	        String query2 = "insert into orders (transaction_id, total_price, order_status) values (?, ?, ?);";
+	        
+	        ps = conn.prepareStatement(query2);
 	        
 	        ps.setString(1, transaction_number);
-	        ps.setString(2, customer_id);
-	        ps.setString(3, bookisbn);
-	        ps.setInt(4, q);
-	        ps.setString(5, price);
+	        ps.setDouble(2, Double.valueOf(price));
+	        ps.setString(3, "On the way");
 	        ps.execute();
 	        
 	        System.out.println("Order placed. Remember your Transaction number: " + transaction_number);
@@ -1369,7 +1432,7 @@ public class Main {
     	  } finally {
     		  try{
     			  ps.close();
-    			  c.close();
+    			  
     			  
     		  } catch(SQLException e) {
     			  System.out.println(e.toString());

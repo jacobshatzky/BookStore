@@ -27,10 +27,10 @@ insert into publisher values ('1011', 'Pierre-Jules Hetzel', 'LA', '123-456-789'
 
 
 insert into book values ('973-1-60705-015-4', 'Harry Potter and the Philosophers Stone', 'Fantasy Fiction', 223, 19.99, 'J.K. Rowling', 'Bloomsbury Publishing');
-insert into book values ('973-1-60705-015-4', 'Blade Runner', 'Fantasy Fiction', 150, 19.99, 'Phillip K. Dick', 'David Mckay Publications');
-insert into book values ('973-1-60705-015-4', 'It', 'Horror', 135, 15.99, 'Stephen King', 'Viking');
-insert into book values ('973-1-60705-015-4', 'Hunger Games', 'Thriller', 200, 25.99, 'Suzanne Collins', 'Scholastic Press');
-insert into book values ('973-1-60705-015-4', 'Journey to the Center of the Earth', 'Thriller', 212, 9.99, 'Jules Verne', 'Pierre-Jules Hetzel');
+insert into book values ('973-1-60705-015-5', 'Blade Runner', 'Fantasy Fiction', 150, 19.99, 'Phillip K. Dick', 'David Mckay Publications');
+insert into book values ('973-1-60705-015-6', 'It', 'Horror', 135, 15.99, 'Stephen King', 'Viking');
+insert into book values ('973-1-60705-015-7', 'Hunger Games', 'Thriller', 200, 25.99, 'Suzanne Collins', 'Scholastic Press');
+insert into book values ('973-1-60705-015-8', 'Journey to the Center of the Earth', 'Thriller', 212, 9.99, 'Jules Verne', 'Pierre-Jules Hetzel');
 
 insert into customer values ('4823744352', 'Joe Shmo', '123 derry lane', '123-456-789', 'joeshmo@gmail.com');
 insert into customer values ('4823744353', 'Pennywise', '16 clown street', '987-654-321', 'pennywise@gmail.com');
