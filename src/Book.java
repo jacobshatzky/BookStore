@@ -3,23 +3,16 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+
 public class Book {
 	private String ISBN;
-	
 	private String title;
-	
 	private String genre;
-	
 	private int pages;
-	
 	private double price;
-	
 	private String author;
-	
 	private String publisher;
-	
 	private int quantity; 
-	
 	private int commission;
 	
 	public Book() {
@@ -101,7 +94,8 @@ public class Book {
 	
 	public void reStock() {
 		quantity = 15;
-		
 	}
+	
+	
 	
 }

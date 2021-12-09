@@ -1,4 +1,3 @@
-
 public class Publisher {
 	private String ID;
 	
