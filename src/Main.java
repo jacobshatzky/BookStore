@@ -209,130 +209,11 @@ public class Main {
 	//Owner functions
 	static void viewInventory() {
 		
-		//String jdbcURL = "jdbc:sqlite://C:\\Users\\Jean\\eclipse-workspace\\BookStore_v3\\src\\bkstr.db";
-		String jdbcURL = "jdbc:postgresql://localhost:5432/bookstore"; 
-		String username = "postgres";
-		String psswd = "5432";
-
-		
-		try {
-			Connection conn = DriverManager.getConnection(jdbcURL, username, psswd);
-			
-			//Creating the statement
-			Statement stmt = conn.createStatement();
-			
-			System.out.println("View inventory by:");
-			System.out.println("1. Genre");
-			System.out.println("2. Publisher");
-			System.out.println("3. View All");
-			
-			Scanner input = new Scanner(System.in);
-			String selection = input.nextLine();
-			
-			if(selection.equals("1")) {
-				System.out.println("\n1. Biographies\n2. Children");
-				Scanner inp = new Scanner(System.in);
-				String sel = inp.nextLine();
-				
-				if(sel.equals("1")) {
-					String filterBy = "bio";
-					
-				    //Query to retrieve records
-					String query = "select * from book where genre ='" + filterBy + "';";
-					System.out.println(query);
-					
-					browseAll();
-				}
-				
-				if(sel.equals("2")) {
-					String filterBy = "children";
-					
-				    //Query to retrieve records
-					String query = "select * from book where genre = '" + filterBy +"';";
-										
-				    					
-					filterInventoryBy(query, filterBy, jdbcURL);
-					//String query = "create view booksByGenre AS select genre from book where genre='bio'";
-					//browseAll();
-				}
-			}
-			
-			if(selection.equals("2")) {
-				System.out.println("\n1. DS\n2. ACME");
-				Scanner inp = new Scanner(System.in);
-				String sel = inp.nextLine();
-				
-				if(sel.equals("1")) {
-		
-					String filterBy = "DS Publishers";
-					
-				    //Query to retrieve records
-					String query = "select * from book where publisher_name=" + filterBy;
-					System.out.println(query);
-					
-					filterInventoryBy(query, filterBy, jdbcURL);
-
-				}
-				
-				if(sel.equals("2")) {
-				    //Query to retrieve records
-					String filterBy = "ACME Publishers";
-					
-				    //Query to retrieve records
-					String query = "select * from book where publisher_name=" + filterBy;
-					System.out.println(query);
-					
-				    //Executing the query
-					ResultSet res = stmt.executeQuery(query);
-					
-					filterInventoryBy(query, filterBy, jdbcURL);
-
-				}
-				
-
-			}
-			
-			if(selection.equals("3")) {
-				System.out.println("\n");
-				
-				String filteredBy = "DS Publishers";
-				
-			    //Query to retrieve records
-				String query = "select * from book";
-				System.out.println(query);
-				
-			    //Executing the query
-				ResultSet res = stmt.executeQuery(query);
-				
-				filterInventoryBy(query, filteredBy, jdbcURL);	
-				
-				System.out.println("Contents of the Book table:");
-				while(res.next()) {
-					String isbn = 			res.getString("isbn");
-					String title = 			res.getString("title");
-					String author_name = 	res.getString("author_name");
-					String genre = 			res.getString("genre");
-					String pages = 			res.getString("pages");
-					String publisher_name = res.getString("publisher_name");
-					String quantity = 		res.getString("quantity");
-					String price = 			res.getString("price");
-					
-					System.out.println("ISBN:" + isbn + "\tTitle:" + title + "\tAuthor:" + author_name + "\tGenre:" + genre + "\tPages:" + pages + "\tPublisher:" + publisher_name + "\tQuantity:" + quantity + "\tPrice:" + price);
-				}
-				System.out.println("Successful!\n");
-				ownerPortal();
-				
-			}else{
-				System.out.println("\nError, Please enter either 1,2 or 3");
-				ownerPortal();
-			}
-		
-			conn.close();
-			
-		}catch(Exception e) {
-			System.out.println("Error connecting to SQLite DB.");
-			System.out.println(e);
+		for(int i=0; i<books.size(); i++) {
+			System.out.println((i+1) + ". Title: " + books.get(i).getTitle() + ", ISBN: " + books.get(i).getISBN() + ", Price: $" + books.get(i).getPrice());
 		}
+		System.out.println("\n");
+		ownerPortal();
 	}
 	
 	
@@ -1378,6 +1259,7 @@ public class Main {
 	    	
 	    	System.out.println("\nLike what you see? Go ahead and type the book's isbn to add it to your shopping cart.");
 	    	System.out.print("Hit 'x' to search for a different genre: ");
+	    	System.out.println("\nOr enter 'home' to return to the customer portal");
 
 			Scanner inputBuy = new Scanner(System.in);
 			String selectionBuy = inputBuy.nextLine();
@@ -1387,6 +1269,9 @@ public class Main {
 				
 			}else if(selectionBuy.equals("x")) {
 				search();
+				
+			}else if(selectionBuy.equals("home")) {
+				customerPortal();
 				
 			}else {
 				System.out.println("Invalid entry");
