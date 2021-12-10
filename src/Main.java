@@ -538,6 +538,7 @@ public class Main {
 		System.out.println("Which report would you like to view?");
 		System.out.println("1. View sales per month");
 		System.out.println("2. View all time sales");
+		System.out.println("3. Return to owner portal");
 
 		Scanner input = new Scanner(System.in);
 		String selection = input.nextLine();
@@ -573,6 +574,7 @@ public class Main {
 				}
 				
 				conn.close();
+				viewSalesReports();
 				
 			}catch(Exception e) {
 				System.out.println(e);
@@ -601,15 +603,19 @@ public class Main {
 				}
 				
 				conn.close();
+				viewSalesReports();
 				
 			}catch(Exception e) {
 				System.out.println(e);
 			}
 
+		}else if(selection.equals("3")) {
+			ownerPortal();
 		}else {
-			System.out.println("\nError, Please enter either 1 or 2");
+			System.out.println("\nError, Please enter either 1,2 or 3");
 			viewSalesReports();
 		}
+		
 							
 	}
 	
