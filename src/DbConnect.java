@@ -27,8 +27,7 @@ public class DbConnect {
 			// If using sqlite locally 
 			//conn = DriverManager.getConnection(jdbcHost);
 			
-			System.out.println("Connected to db_bookstore!");
-			
+						
 		} catch (ClassNotFoundException | SQLException e ) {
 			// TODO Auto-generated catch block
 			System.out.println(e+"");
