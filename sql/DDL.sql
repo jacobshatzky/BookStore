@@ -1,8 +1,6 @@
 create table bookstore
-	(ID					varchar(5) not null, 
-	 name				varchar(50) not null,
-	 email				varchar(50) not null, 
-	 primary key (ID)
+	(bank_account    	decimal(5,2),
+	
 	);
 
 create table orders(
@@ -13,15 +11,7 @@ create table orders(
 	primary key (transaction_id)
 	
 );
-	
-create table author
-	(
-		ID					varchar(50) not null, 
-		author_name			varchar(50) not null,
-		address			varchar(50) not null,	
-		primary key (ID)
-	);
-	
+		
 create table publisher
 	(ID			   		varchar(50) not null, 
 	 publisher_name		varchar(50) not null,
